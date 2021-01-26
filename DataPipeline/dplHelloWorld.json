@@ -1,0 +1,54 @@
+{
+  "objects": [
+  { 
+      "id": "Default",
+      "failureAndRerunMode":"cascade",
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "role": "DataPipelineDefaultRole",
+      "pipelineLogUri": "#{myS3LogsPath}/DPLHelloWorld",
+      "scheduleType": "cron",
+      "schedule": {
+        "ref": "DefaultSchedule"
+      }
+   },
+   {
+      "type": "Schedule",
+      "id": "DefaultSchedule",
+      "occurrences": "1",
+      "period": "1 Day",
+      "startAt": "FIRST_ACTIVATION_DATE_TIME"
+    },
+    {
+      "id": "EC2Resource_DPLHelloWorld",
+      "type": "Ec2Resource",
+      "terminateAfter": "1 Hour"
+    },
+    {
+      "id": "ShellCommandActivity_DPLHelloWorld",
+      "runsOn": {
+        "ref": "EC2Resource_DPLHelloWorld"
+      },
+      "type": "ShellCommandActivity",
+      "command": "echo 'Hello, Hola World!'"
+    },
+    {
+        "id": "OutputData",
+        "name": "OutputData",
+        "type": "S3DataNode",
+        "filePath": "s3://DPL-test/abc"
+    },
+    {
+        "id": "OutputData2",
+        "name": "OutputData",
+        "type": "S3DataNode",
+        "filePath": "s3://DPL-test/def"
+    }
+  ],
+"parameters": [
+     {
+        "id" : "myS3LogsPath",
+        "type" : "AWS::S3::ObjectKey",
+        "description" : "S3 path for pipeline logs."
+     }
+   ]
+}
